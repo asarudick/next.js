@@ -148,8 +148,9 @@ export const formatDebugAddress = ({ host, port }: DebugAddress): string => {
  * @returns An object with the host and port of the debug address.
  */
 export const getParsedDebugAddress = (): DebugAddress => {
+  const defaultConfig = { host: undefined, port: 9229 };
   const args = getNodeOptionsArgs()
-  if (args.length === 0) return { host: undefined, port: 9229 }
+  if (args.length === 0) return defaultConfig
 
   const parsed = parseNodeArgs(args)
 
@@ -159,7 +160,7 @@ export const getParsedDebugAddress = (): DebugAddress => {
     parsed.inspect ?? parsed['inspect-brk'] ?? parsed['inspect_brk']
 
   if (!address || typeof address !== 'string') {
-    return { host: undefined, port: 9229 }
+    return defaultConfig
   }
 
   // The address is in the form of `[host:]port`. Let's parse the address.
@@ -168,7 +169,7 @@ export const getParsedDebugAddress = (): DebugAddress => {
     return { host, port: parseInt(port, 10) }
   }
 
-  return { host: undefined, port: parseInt(address, 10) }
+  return { host: address, port: 9229 }
 }
 
 /**
@@ -203,7 +204,7 @@ export function formatNodeOptions(
           value.includes(' ') && !value.startsWith('"')
             ? JSON.stringify(value)
             : value
-        }`
+          }`
       }
 
       return null
